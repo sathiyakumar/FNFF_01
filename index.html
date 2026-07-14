@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Nations Fresh Foods — Tech Theme</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
+
+:root{
+  --cream:#FBF6EE;
+  --sand:#F2E3CC;
+  --white:#FFFFFF;
+  --dark:#26140F;
+  --dark2:#331B12;
+  --panel-d:rgba(255,255,255,0.05);
+  --line-d:rgba(255,255,255,0.14);
+  --line-l:rgba(43,26,20,0.12);
+  --ochre:#E88A1A;
+  --terra:#C24A3D;
+  --ink:#2B1A14;
+  --dim-l:#7A6355;
+  --dim-d:#CBB49E;
+  --sans:'Inter',sans-serif;
+  --display:'Sora',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px;position:relative}
+section{position:relative}
+::selection{background:var(--ochre);color:#fff}
+
+/* ambient warm glows on cream */
+.mesh{position:fixed;inset:0;z-index:0;pointer-events:none}
+.mesh::before{content:'';position:absolute;width:720px;height:720px;left:-240px;top:8%;background:radial-gradient(circle, rgba(232,138,26,0.10), transparent 65%);animation:drift1 18s ease-in-out infinite}
+.mesh::after{content:'';position:absolute;width:640px;height:640px;right:-220px;top:46%;background:radial-gradient(circle, rgba(194,74,61,0.08), transparent 65%);animation:drift2 22s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(90px,60px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-110px,-70px)}}
+main{position:relative;z-index:1}
+
+/* NAV — warm glass, works over dark hero and cream sections */
+nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);width:min(1200px, calc(100% - 40px));z-index:200;background:rgba(38,20,15,0.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.14);border-radius:18px;color:#FFF6EA}
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:16px 26px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--ochre),var(--terra));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--display);font-weight:800;font-size:17px;box-shadow:0 0 24px rgba(232,138,26,0.4)}
+.brand-text{font-family:var(--display);font-weight:700;font-size:17.5px;line-height:1.15}
+.brand-text span{display:block;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:1.8px;color:var(--ochre);margin-top:2px}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:15.5px;font-weight:500;color:var(--dim-d);transition:color .2s}
+.nav-links a.active{color:#fff}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:linear-gradient(135deg,var(--ochre),var(--terra));color:#fff;padding:13px 26px;border-radius:12px;font-size:14.5px;font-weight:700;transition:transform .2s, box-shadow .2s}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(194,74,61,0.45)}
+
+/* HERO — 3D cube slider on deep brown */
+.hero{height:100vh;min-height:700px;position:relative;overflow:hidden;background:var(--dark);color:#FFF6EA}
+.cube-stage{position:absolute;inset:0;perspective:1600px}
+.cube-slide{position:absolute;inset:0;backface-visibility:hidden;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.7,0,.25,1), opacity 1.1s;opacity:0;pointer-events:none;display:flex;align-items:center}
+.cube-slide.active{transform:rotateY(0deg) translateZ(0);opacity:1;pointer-events:auto;z-index:2}
+.cube-slide.exit-left{transform:rotateY(-72deg) translateZ(-320px) translateX(-40%);opacity:0}
+.cube-slide.enter-right{transform:rotateY(72deg) translateZ(-320px) translateX(40%);opacity:0}
+.cube-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1.05)}
+.cube-slide.active .cube-bg{animation:slowZoom 8s ease-out forwards}
+@keyframes slowZoom{from{transform:scale(1.1)}to{transform:scale(1.01)}}
+.cube-shade{position:absolute;inset:0;background:linear-gradient(100deg, rgba(38,20,15,0.95) 8%, rgba(38,20,15,0.68) 44%, rgba(38,20,15,0.16) 72%, rgba(38,20,15,0.5) 100%)}
+.cube-shade::after{content:'';position:absolute;inset:0;background:linear-gradient(to top, var(--dark) 0%, transparent 22%)}
+
+.cube-slide .wrap{width:100%;z-index:5;padding-top:56px}
+.slide-text{max-width:720px}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;letter-spacing:1.6px;color:var(--ochre);border:1px solid rgba(232,138,26,0.4);background:rgba(232,138,26,0.10);padding:9px 18px;border-radius:30px;margin-bottom:26px;opacity:0;transform:translateY(16px)}
+.cube-slide.active .hero-tag{animation:rise .7s ease forwards .15s}
+.hero-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--ochre);box-shadow:0 0 12px var(--ochre);animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(42px,5.4vw,66px);line-height:1.08;letter-spacing:-1.4px;margin-bottom:24px;color:#FFF6EA}
+.hero h1 .grad{background:linear-gradient(92deg,var(--ochre),#F2B04A 55%,var(--terra));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .line{display:block;overflow:hidden}
+.hero h1 .line span{display:inline-block;transform:translateY(110%)}
+.cube-slide.active h1 .line span{animation:lineUp .9s cubic-bezier(.2,.7,.2,1) forwards}
+.hero h1 .line:nth-child(2) span{animation-delay:.32s}
+@keyframes lineUp{to{transform:translateY(0)}}
+@keyframes rise{to{opacity:1;transform:translateY(0)}}
+.hero p{color:var(--dim-d);font-size:18px;max-width:560px;margin-bottom:36px;opacity:0;transform:translateY(16px);line-height:1.65}
+.cube-slide.active .slide-text p{animation:rise .7s ease forwards .55s}
+.hero-ctas{display:flex;gap:14px;opacity:0;transform:translateY(16px)}
+.cube-slide.active .hero-ctas{animation:rise .7s ease forwards .72s}
+.btn-solid{background:linear-gradient(135deg,var(--ochre),var(--terra));color:#fff;padding:17px 32px;border-radius:14px;font-weight:700;font-size:15.5px;transition:transform .2s, box-shadow .2s}
+.btn-solid:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(194,74,61,0.45)}
+.btn-ghost{border:1px solid rgba(255,255,255,0.35);background:rgba(255,255,255,0.06);backdrop-filter:blur(8px);color:#FFF6EA;padding:16px 32px;border-radius:14px;font-weight:600;font-size:15.5px;transition:border-color .2s, transform .2s}
+.btn-ghost:hover{border-color:var(--ochre);transform:translateY(-3px)}
+
+/* hero HUD frame */
+.hud{position:absolute;z-index:6;font-family:var(--mono);font-size:12px;letter-spacing:1.4px;color:rgba(255,246,234,0.5);pointer-events:none;line-height:1.8}
+.hud-tl{top:112px;left:40px}
+.hud-br{bottom:100px;right:40px;text-align:right}
+.hud b{color:var(--ochre);font-weight:500}
+
+/* hero controls */
+.hero-ctrl{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:22px}
+.hc-btn{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.07);backdrop-filter:blur(10px);color:#FFF6EA;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s, transform .2s}
+.hc-btn:hover{border-color:var(--ochre);transform:scale(1.06)}
+.hc-btn svg{width:18px;height:18px}
+.hero-progress{display:flex;gap:10px}
+.hp{width:48px;height:5px;border-radius:5px;background:rgba(255,255,255,0.22);overflow:hidden;cursor:pointer}
+.hp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ochre),var(--terra));border-radius:5px}
+.hp.active i{animation:fillbar 6.5s linear forwards}
+@keyframes fillbar{to{width:100%}}
+
+/* certification ticker — dark strip */
+.ticker{background:var(--dark2);border-bottom:1px solid rgba(255,255,255,0.08);overflow:hidden;padding:18px 0;color:var(--dim-d)}
+.ticker-track{display:flex;gap:64px;width:max-content;animation:scrollX 26s linear infinite}
+.ticker-item{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;letter-spacing:1.6px;white-space:nowrap}
+.ticker-item i{width:8px;height:8px;border-radius:2px;background:var(--ochre);transform:rotate(45deg);box-shadow:0 0 10px rgba(232,138,26,0.6)}
+@keyframes scrollX{to{transform:translateX(-50%)}}
+
+/* section heads */
+.sec-head{text-align:center;max-width:680px;margin:0 auto 58px}
+.kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:2.2px;color:var(--terra);text-transform:uppercase;margin-bottom:14px;display:inline-flex;align-items:center;gap:10px}
+.kicker::before,.kicker::after{content:'';width:26px;height:1px;background:linear-gradient(90deg,transparent,var(--terra))}
+.kicker::after{background:linear-gradient(90deg,var(--terra),transparent)}
+.sec-head h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.8px;line-height:1.12;color:var(--ink)}
+.sec-head p{color:var(--dim-l);font-size:16.5px;margin-top:14px}
+.on-dark .sec-head h2{color:#FFF6EA}
+.on-dark .sec-head p{color:var(--dim-d)}
+.on-dark .kicker{color:var(--ochre)}
+.on-dark .kicker::before{background:linear-gradient(90deg,transparent,var(--ochre))}
+.on-dark .kicker::after{background:linear-gradient(90deg,var(--ochre),transparent)}
+
+/* ACK strip — cream section */
+.ack{padding:90px 0 30px}
+.ack-card{position:relative;border:1px solid var(--line-l);background:linear-gradient(120deg, rgba(232,138,26,0.09), var(--white) 45%, rgba(194,74,61,0.07));border-radius:22px;padding:36px 46px;display:flex;gap:24px;align-items:center;overflow:hidden;box-shadow:0 14px 36px rgba(43,26,20,0.07)}
+.ack-card::before{content:'';position:absolute;top:0;left:-60%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(232,138,26,0.10),transparent);animation:sheen 5.5s ease-in-out infinite}
+@keyframes sheen{0%{left:-60%}60%,100%{left:120%}}
+.ack-ring{width:54px;height:54px;flex-shrink:0;border-radius:50%;border:2px solid var(--terra);position:relative}
+.ack-ring::before{content:'';position:absolute;inset:8px;border-radius:50%;border:2px solid var(--ochre)}
+.ack-ring::after{content:'';position:absolute;inset:18px;border-radius:50%;background:var(--ink)}
+.ack-card p{font-size:15.5px;color:var(--ink);line-height:1.7}
+.ack-card strong{color:var(--terra)}
+
+/* CAPABILITY GRID — white tilt cards on cream */
+.caps{padding:90px 0}
+.cap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cap-card{position:relative;border:1px solid var(--line-l);background:var(--white);border-radius:20px;padding:32px 28px;transform-style:preserve-3d;transition:border-color .25s, box-shadow .25s;will-change:transform;overflow:hidden;box-shadow:0 10px 26px rgba(43,26,20,0.06)}
+.cap-card::before{content:'';position:absolute;inset:0;background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%), rgba(232,138,26,0.12), transparent 46%);opacity:0;transition:opacity .3s}
+.cap-card:hover::before{opacity:1}
+.cap-card:hover{border-color:rgba(194,74,61,0.45);box-shadow:0 20px 44px rgba(43,26,20,0.12)}
+.cap-num{font-family:var(--mono);font-size:12px;color:rgba(43,26,20,0.38);letter-spacing:1.6px;margin-bottom:20px}
+.cap-icon{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg, rgba(232,138,26,0.14), rgba(194,74,61,0.08));border:1px solid rgba(232,138,26,0.4);display:flex;align-items:center;justify-content:center;margin-bottom:18px;transform:translateZ(30px)}
+.cap-icon svg{width:25px;height:25px}
+.cap-card h3{font-family:var(--display);font-size:18.5px;font-weight:700;margin-bottom:9px;transform:translateZ(24px);color:var(--ink)}
+.cap-card p{font-size:15px;color:var(--dim-l);transform:translateZ(18px);line-height:1.6}
+
+/* 3D COVERFLOW — dark brown band */
+.range{padding:90px 0 110px;overflow:hidden;background:var(--dark);color:#FFF6EA}
+.range::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 80%)}
+.coverflow{position:relative;height:470px;perspective:1400px}
+.cf-card{position:absolute;top:0;left:50%;width:340px;height:430px;margin-left:-170px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,0.16);transition:transform .8s cubic-bezier(.2,.8,.2,1), opacity .8s, filter .8s;cursor:pointer;transform-style:preserve-3d;background:var(--dark2)}
+.cf-media{position:absolute;inset:0;background-size:cover;background-position:center}
+.cf-fade{position:absolute;inset:0;background:linear-gradient(to top, rgba(38,20,15,0.96) 8%, rgba(38,20,15,0.28) 48%, transparent 70%)}
+.cf-body{position:absolute;left:0;right:0;bottom:0;padding:26px}
+.cf-chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:1.4px;color:#FFD9A0;border:1px solid rgba(232,138,26,0.5);background:rgba(232,138,26,0.14);border-radius:20px;padding:6px 13px;margin-bottom:11px}
+.cf-body h3{font-family:var(--display);font-size:20px;font-weight:700;margin-bottom:6px;color:#FFF6EA}
+.cf-body p{font-size:14px;color:var(--dim-d)}
+.cf-nav{display:flex;justify-content:center;gap:16px;margin-top:40px;position:relative;z-index:5}
+
+/* STATS band — cream */
+.stats{padding:90px 0}
+.stat-band{border:1px solid var(--line-l);border-radius:24px;background:linear-gradient(120deg, rgba(232,138,26,0.07), var(--white) 55%, rgba(194,74,61,0.06));display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 16px 40px rgba(43,26,20,0.07)}
+.stat{padding:46px 24px;text-align:center;position:relative}
+.stat + .stat::before{content:'';position:absolute;left:0;top:22%;height:56%;width:1px;background:var(--line-l)}
+.stat-num{font-family:var(--display);font-weight:800;font-size:48px;letter-spacing:-1px;background:linear-gradient(92deg,var(--ochre),var(--terra));-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05}
+.stat-num sup{font-size:24px}
+.stat-label{font-family:var(--mono);font-size:11.5px;letter-spacing:1.8px;color:var(--dim-l);text-transform:uppercase;margin-top:10px}
+
+/* TESTIMONIALS — sand band, white cards */
+.voices{padding:90px 0;background:var(--sand)}
+.voice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.voice-card{border:1px solid var(--line-l);background:var(--white);border-radius:20px;padding:30px;position:relative;transition:transform .25s, box-shadow .25s;box-shadow:0 10px 26px rgba(43,26,20,0.07)}
+.voice-card:hover{transform:translateY(-6px);box-shadow:0 22px 46px rgba(43,26,20,0.13)}
+.voice-quote{font-family:var(--display);font-size:46px;line-height:0.6;color:var(--ochre);margin-bottom:20px}
+.voice-card p{font-size:15.5px;color:var(--ink);line-height:1.75;margin-bottom:24px}
+.voice-meta{display:flex;align-items:center;gap:12px}
+.voice-ava{width:46px;height:46px;border-radius:12px;overflow:hidden;border:1px solid var(--line-l);flex-shrink:0}
+.voice-ava svg{width:100%;height:100%;display:block}
+.voice-name{font-size:14.5px;font-weight:700;color:var(--ink)}
+.voice-role{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--dim-l)}
+
+/* CTA — dark brown card */
+.cta{padding:50px 0 110px}
+.cta-card{position:relative;border:1px solid rgba(194,74,61,0.4);border-radius:28px;padding:74px 48px;text-align:center;overflow:hidden;background:var(--dark);color:#FFF6EA}
+.cta-card::before{content:'';position:absolute;inset:0;background:radial-gradient(900px circle at 50% -10%, rgba(232,138,26,0.22), transparent 60%)}
+.cta-card h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,46px);letter-spacing:-0.8px;margin-bottom:16px;position:relative}
+.cta-card p{color:var(--dim-d);max-width:520px;margin:0 auto 34px;font-size:16.5px;position:relative}
+.cta-card .btn-solid{position:relative}
+.cta-orb{position:absolute;border-radius:50%;filter:blur(2px);opacity:.55;animation:orb 9s ease-in-out infinite}
+.co-1{width:14px;height:14px;background:var(--ochre);left:12%;top:30%}
+.co-2{width:9px;height:9px;background:#F2B04A;right:16%;top:24%;animation-delay:1.4s}
+.co-3{width:11px;height:11px;background:var(--terra);right:24%;bottom:26%;animation-delay:2.6s}
+.co-4{width:7px;height:7px;background:var(--ochre);left:22%;bottom:22%;animation-delay:.8s}
+@keyframes orb{0%,100%{transform:translateY(0)}50%{transform:translateY(-26px)}}
+
+/* FOOTER — dark brown */
+footer{background:var(--dark2);color:var(--dim-d);padding:60px 0 30px}
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:34px;margin-bottom:42px}
+.foot-col h5{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--ochre);text-transform:uppercase;margin-bottom:18px}
+.foot-col p,.foot-col a{display:block;font-size:14.5px;color:var(--dim-d);margin-bottom:11px;transition:color .2s}
+.foot-col a:hover{color:#FFF6EA}
+.foot-form{display:flex;border:1px solid rgba(255,255,255,0.18);border-radius:14px;overflow:hidden;background:rgba(255,255,255,0.05)}
+.foot-form input{flex:1;padding:14px 16px;background:transparent;border:none;outline:none;color:#FFF6EA;font-size:14px;font-family:var(--sans)}
+.foot-form input::placeholder{color:rgba(255,246,234,0.4)}
+.foot-form button{background:linear-gradient(135deg,var(--ochre),var(--terra));border:none;color:#fff;font-weight:700;font-size:14px;padding:0 22px;cursor:pointer}
+.foot-bottom{border-top:1px solid rgba(255,255,255,0.12);padding-top:24px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;letter-spacing:1.2px;color:rgba(255,246,234,0.4)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(30px);transition:opacity .8s ease, transform .8s ease}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  .nav-links{display:none}
+  .cap-grid,.voice-grid{grid-template-columns:1fr}
+  .stat-band{grid-template-columns:1fr 1fr}
+  .stat:nth-child(3)::before{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .hud{display:none}
+  .cf-card{width:270px;height:370px;margin-left:-135px}
+  .coverflow{height:410px}
+  .hero{min-height:640px}
+  .hero p{font-size:16.5px}
+  .foot-bottom{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="mesh"></div>
+
+<nav>
+  <div class="navbar">
+    <a href="#" class="brand">
+      <div class="brand-mark">FN</div>
+      <div class="brand-text">First Nations Fresh Foods<span>ABORIGINAL-OWNED · WA</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#caps">About Us</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="#stats">Facilities</a></li>
+      <li><a href="#caps">Quality &amp; Safety</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Request a Quote</a>
+  </div>
+</nav>
+
+<main>
+
+<section class="hero">
+  <div class="cube-stage" id="cubeStage">
+    <div class="cube-slide active" data-slide="0">
+      <div class="cube-bg" style="background-image:url('images/hero-1.jpg')"></div>
+      <div class="cube-shade"></div>
+      <div class="wrap">
+        <div class="slide-text">
+          <div class="hero-tag"><span class="dot"></span>SUPPLY NETWORK · ONLINE</div>
+          <h1><span class="line"><span>Fresh produce supply,</span></span><span class="line"><span>engineered for <span class="grad">reliability.</span></span></span></h1>
+          <p>Cool-chain fresh and hand-processed produce for hospitality, government, and institutional buyers across Western Australia.</p>
+          <div class="hero-ctas"><a href="#contact" class="btn-solid">Request a Quote</a><a href="#range" class="btn-ghost">Explore Range</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="cube-slide" data-slide="1">
+      <div class="cube-bg" style="background-image:url('images/hand-processing.jpg')"></div>
+      <div class="cube-shade"></div>
+      <div class="wrap">
+        <div class="slide-text">
+          <div class="hero-tag"><span class="dot"></span>HAND-PROCESSED · DAILY</div>
+          <h1><span class="line"><span>Cut to order.</span></span><span class="line"><span>Delivered <span class="grad">to spec.</span></span></span></h1>
+          <p>Slicing, dicing, julienne and chateau — processed daily by hand, exactly as your kitchen requires it.</p>
+          <div class="hero-ctas"><a href="#contact" class="btn-solid">Request a Quote</a><a href="#caps" class="btn-ghost">Our Capabilities</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="cube-slide" data-slide="2">
+      <div class="cube-bg" style="background-image:url('images/hero-3.jpg')"></div>
+      <div class="cube-shade"></div>
+      <div class="wrap">
+        <div class="slide-text">
+          <div class="hero-tag"><span class="dot"></span>PROUDLY ABORIGINAL-OWNED</div>
+          <h1><span class="line"><span>A First Nations story,</span></span><span class="line"><span>built on <span class="grad">country.</span></span></span></h1>
+          <p>Genuinely Aboriginal-owned and operated — cultural identity told in our own words, backed by decades of supply.</p>
+          <div class="hero-ctas"><a href="#contact" class="btn-solid">Get in Touch</a><a href="#voices" class="btn-ghost">Our Story</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hud hud-tl">FNFF // CANNING VALE WA<br><b>COOL-CHAIN: ACTIVE</b></div>
+  <div class="hud hud-br">SQF CERTIFIED<br><b>LAT -32.05 / LON 115.92</b></div>
+
+  <div class="hero-ctrl">
+    <button class="hc-btn" id="prevSlide" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="hero-progress">
+      <div class="hp active" data-i="0"><i></i></div>
+      <div class="hp" data-i="1"><i></i></div>
+      <div class="hp" data-i="2"><i></i></div>
+    </div>
+    <button class="hc-btn" id="nextSlide" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="ticker-item"><i></i>SQF FOOD SAFETY CERTIFIED</span>
+    <span class="ticker-item"><i></i>12 COOL ROOMS ON SITE</span>
+    <span class="ticker-item"><i></i>2 BLAST CHILLERS</span>
+    <span class="ticker-item"><i></i>HEALTH &amp; SAFETY PROGRAM</span>
+    <span class="ticker-item"><i></i>MODERN SLAVERY PROGRAM</span>
+    <span class="ticker-item"><i></i>100% ABORIGINAL-OWNED</span>
+    <span class="ticker-item"><i></i>30+ YEARS SUPPLYING WA</span>
+  </div>
+</div>
+
+<section class="ack">
+  <div class="wrap">
+    <div class="ack-card rv">
+      <div class="ack-ring"></div>
+      <p><strong>Acknowledgement of Country.</strong> We acknowledge the Traditional Owners of the lands on which we operate, and pay our respects to Elders past and present. First Nations Fresh Foods is proudly Aboriginal-owned and operated.</p>
+    </div>
+  </div>
+</section>
+
+<section class="caps" id="caps">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Capabilities</div>
+      <h2>Built on certified reliability</h2>
+      <p>Every layer of the operation — from cool room to loading dock — is audited, certified, and engineered for consistency.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card rv"><div class="cap-num">CAP / 01</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>SQF Certified</h3><p>Independently audited food safety program covering every processing and storage stage.</p></div>
+      <div class="cap-card rv"><div class="cap-num">CAP / 02</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round"><path d="M12 2v20M4 6l16 12M20 6L4 18"/></svg></div><h3>Cool-Chain Logistics</h3><p>12 cool rooms at differentiated temperatures, 2 freezer rooms, and 2 blast chillers on site.</p></div>
+      <div class="cap-card rv"><div class="cap-num">CAP / 03</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l2 5H4l2-5zM4 8v11a2 2 0 002 2h12a2 2 0 002-2V8"/><path d="M9 12h6"/></svg></div><h3>Hand-Processing</h3><p>Cut to order daily — slicing, dicing, julienne and chateau to exact kitchen specification.</p></div>
+      <div class="cap-card rv"><div class="cap-num">CAP / 04</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="#C24A3D"/></svg></div><h3>Aboriginal-Owned</h3><p>Genuinely First Nations owned and operated — recognised by procurement teams that value it.</p></div>
+      <div class="cap-card rv"><div class="cap-num">CAP / 05</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16V7h10v9M13 10h4l3 3v3h-3"/><circle cx="7" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg></div><h3>WA-Wide Delivery</h3><p>Refrigerated fleet delivering across metro and regional Western Australia, on schedule.</p></div>
+      <div class="cap-card rv"><div class="cap-num">CAP / 06</div><div class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#C24A3D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8l8-4 8 4-8 4-8-4zM4 8v8l8 4 8-4V8"/></svg></div><h3>Product Development</h3><p>Specialists designing produce lines and menus around individual buyer requirements.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="range on-dark" id="range">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Product Range</div>
+      <h2>A sample of what we supply</h2>
+      <p>Drag, click, or use the arrows — every line is quoted to your specification.</p>
+    </div>
+  </div>
+  <div class="coverflow" id="coverflow">
+    <div class="cf-card" data-idx="0"><div class="cf-media" style="background-image:url('images/hand-processing.jpg')"></div><div class="cf-fade"></div><div class="cf-body"><span class="cf-chip">HAND-PROCESSING</span><h3>Diced Vegetable Mix</h3><p>Hand-cut blends prepared daily to spec.</p></div></div>
+    <div class="cf-card" data-idx="1"><div class="cf-media" style="background-image:url('images/prepared-products.jpg')"></div><div class="cf-fade"></div><div class="cf-body"><span class="cf-chip">PREPARED</span><h3>Fresh Cut Salad Range</h3><p>Ready-to-serve mixes designed to menu.</p></div></div>
+    <div class="cf-card" data-idx="2"><div class="cf-media" style="background-image:url('images/hero-1.jpg')"></div><div class="cf-fade"></div><div class="cf-body"><span class="cf-chip">PREPARED</span><h3>Seasonal Fresh Produce</h3><p>Rotating seasonal lines at peak quality.</p></div></div>
+    <div class="cf-card" data-idx="3"><div class="cf-media" style="background-image:url('images/facility.jpg')"></div><div class="cf-fade"></div><div class="cf-body"><span class="cf-chip">HAND-PROCESSING</span><h3>Julienne Vegetable Pack</h3><p>Fine julienne for stir-fry and garnish.</p></div></div>
+    <div class="cf-card" data-idx="4"><div class="cf-media" style="background-image:url('images/hero-2.jpg')"></div><div class="cf-fade"></div><div class="cf-body"><span class="cf-chip">PREPARED</span><h3>Soup &amp; Stock Vegetables</h3><p>Pre-portioned blends, ready to cook.</p></div></div>
+  </div>
+  <div class="cf-nav">
+    <button class="hc-btn" id="cfPrev" aria-label="Previous product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <a href="products.html" class="btn-ghost" style="display:inline-flex;align-items:center">View All Products</a>
+    <button class="hc-btn" id="cfNext" aria-label="Next product"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+</section>
+
+<section class="stats" id="stats">
+  <div class="wrap">
+    <div class="stat-band rv">
+      <div class="stat"><div class="stat-num" data-target="30">0<sup>+</sup></div><div class="stat-label">Years Supplying WA</div></div>
+      <div class="stat"><div class="stat-num" data-target="12">0</div><div class="stat-label">Cool Rooms On Site</div></div>
+      <div class="stat"><div class="stat-num" data-target="8">0</div><div class="stat-label">Product Ranges</div></div>
+      <div class="stat"><div class="stat-num" data-target="100">0<sup>%</sup></div><div class="stat-label">Aboriginal-Owned</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="voices" id="voices">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="kicker">Trusted By</div>
+      <h2>What our buyers say</h2>
+    </div>
+    <div class="voice-grid">
+      <div class="voice-card rv">
+        <div class="voice-quote">&ldquo;</div>
+        <p>Reliable supply and consistent quality across every order — exactly what our kitchens need.</p>
+        <div class="voice-meta">
+          <div class="voice-ava"><svg viewBox="0 0 44 44"><rect width="44" height="44" fill="#F2E3CC"/><circle cx="22" cy="46" r="19" fill="#C24A3D"/><circle cx="22" cy="19" r="9" fill="#B97B5A"/><path d="M12 18c0-7 4.5-11 10-11s10 4 10 11c0 2-.6 3-1.2 3.6C30.2 16 27.5 14 22 14s-8.2 2-8.8 7.6C12.6 21 12 20 12 18z" fill="#1E1310"/></svg></div>
+          <div><div class="voice-name">Procurement Lead</div><div class="voice-role">HOSPITALITY GROUP · WA</div></div>
+        </div>
+      </div>
+      <div class="voice-card rv">
+        <div class="voice-quote">&ldquo;</div>
+        <p>Certification and traceability are handled properly, which matters for our institutional requirements.</p>
+        <div class="voice-meta">
+          <div class="voice-ava"><svg viewBox="0 0 44 44"><rect width="44" height="44" fill="#F2E3CC"/><circle cx="22" cy="46" r="19" fill="#E88A1A"/><circle cx="22" cy="19" r="9" fill="#8A5A3B"/><path d="M13 16c1-6 5-9 9-9s8 3 9 9c.6 3-.4 5-1 6-.2-1.4-.7-2.4-1.3-3 .6-4.4-2.4-7-6.7-7s-7.3 2.6-6.7 7c-.6.6-1.1 1.6-1.3 3-.6-1-1.6-3-1-6z" fill="#0E0A07"/></svg></div>
+          <div><div class="voice-name">Supply Coordinator</div><div class="voice-role">GOVERNMENT FACILITY</div></div>
+        </div>
+      </div>
+      <div class="voice-card rv">
+        <div class="voice-quote">&ldquo;</div>
+        <p>A genuine, long-standing supply partner — responsive and easy to work with.</p>
+        <div class="voice-meta">
+          <div class="voice-ava"><svg viewBox="0 0 44 44"><rect width="44" height="44" fill="#F2E3CC"/><circle cx="22" cy="46" r="19" fill="#2B1A14"/><circle cx="22" cy="19" r="9" fill="#D9A176"/><path d="M14 15c1.6-5 4.6-7 8-7s6.4 2 8 7c.6 2 0 4-.6 4.6-1-3.6-3.6-5.6-7.4-5.6s-6.4 2-7.4 5.6c-.6-.6-1.2-2.6-.6-4.6z" fill="#5A4632"/><rect x="16" y="17" width="5" height="4" rx="2" fill="none" stroke="#0E0A07" stroke-width=".9"/><rect x="23" y="17" width="5" height="4" rx="2" fill="none" stroke="#0E0A07" stroke-width=".9"/></svg></div>
+          <div><div class="voice-name">Operations Manager</div><div class="voice-role">CATERING SERVICES</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap">
+    <div class="cta-card rv">
+      <span class="cta-orb co-1"></span><span class="cta-orb co-2"></span><span class="cta-orb co-3"></span><span class="cta-orb co-4"></span>
+      <h2>Ready to put fresh on the schedule?</h2>
+      <p>Tell us what your kitchen or facility needs — we'll respond with availability and pricing within one business day.</p>
+      <a href="mailto:sales@firstnationsfreshfoods.com.au" class="btn-solid">Request a Quote</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col"><h5>First Nations Fresh Foods</h5><p>31 Baile Rd, Canning Vale, WA 6155</p><p>+61 8 9455 6868</p><p>sales@firstnationsfreshfoods.com.au</p></div>
+      <div class="foot-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Organisation Chart</a><a href="#">Terms of Trade</a></div>
+      <div class="foot-col"><h5>Quality &amp; Safety</h5><a href="#">SQF Program</a><a href="#">Health &amp; Safety</a><a href="#">Modern Slavery Program</a></div>
+      <div class="foot-col"><h5>Products</h5><a href="products.html">All Products</a><a href="products.html?cat=prepared">Prepared Products</a><a href="products.html?cat=hand-processing">Hand-Processing</a><div class="foot-form" style="margin-top:16px"><input type="email" placeholder="you@company.com"><button>Subscribe</button></div></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 FIRST NATIONS FRESH FOODS</span><span>PROUDLY ABORIGINAL-OWNED · WA</span></div>
+  </div>
+</footer>
+
+<script>
+/* ---------- 3D cube hero slider ---------- */
+const cubeSlides = Array.from(document.querySelectorAll('.cube-slide'));
+const hps = Array.from(document.querySelectorAll('.hp'));
+let cur = 0, autoTimer;
+
+function goTo(next){
+  if(next === cur) return;
+  const out = cubeSlides[cur], inn = cubeSlides[next];
+  cubeSlides.forEach(s=>s.classList.remove('active','exit-left','enter-right'));
+  inn.classList.add('enter-right');
+  void inn.offsetWidth;
+  out.classList.add('exit-left');
+  inn.classList.remove('enter-right');
+  inn.classList.add('active');
+  hps.forEach((p,i)=>{
+    p.classList.remove('active');
+    const bar = p.querySelector('i');
+    bar.style.animation = 'none';
+    void bar.offsetWidth;
+    bar.style.animation = '';
+    if(i===next) p.classList.add('active');
+  });
+  cur = next;
+  restartAuto();
+}
+function nextSlide(){ goTo((cur+1)%cubeSlides.length) }
+function prevSlide(){ goTo((cur-1+cubeSlides.length)%cubeSlides.length) }
+function restartAuto(){ clearInterval(autoTimer); autoTimer = setInterval(nextSlide, 6500); }
+document.getElementById('nextSlide').addEventListener('click', nextSlide);
+document.getElementById('prevSlide').addEventListener('click', prevSlide);
+hps.forEach(p=>p.addEventListener('click', ()=>goTo(parseInt(p.dataset.i))));
+restartAuto();
+
+/* ---------- ticker: duplicate content for seamless loop ---------- */
+const track = document.getElementById('tickerTrack');
+track.innerHTML += track.innerHTML;
+
+/* ---------- 3D tilt on capability cards ---------- */
+document.querySelectorAll('.cap-card').forEach(card=>{
+  card.addEventListener('mousemove', e=>{
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width, y = (e.clientY - r.top)/r.height;
+    card.style.transform = `rotateY(${(x-0.5)*10}deg) rotateX(${(0.5-y)*10}deg) translateZ(4px)`;
+    card.style.setProperty('--mx', (x*100)+'%');
+    card.style.setProperty('--my', (y*100)+'%');
+  });
+  card.addEventListener('mouseleave', ()=>{ card.style.transform = '' });
+});
+
+/* ---------- 3D coverflow carousel ---------- */
+const cfCards = Array.from(document.querySelectorAll('.cf-card'));
+let cfIdx = 2;
+function renderCF(){
+  cfCards.forEach((c,i)=>{
+    const off = i - cfIdx;
+    const abs = Math.abs(off);
+    const x = off * 250;
+    const z = -abs * 210;
+    const ry = off * -32;
+    c.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${ry}deg)`;
+    c.style.opacity = abs > 2 ? 0 : 1 - abs*0.18;
+    c.style.filter = abs === 0 ? 'none' : `brightness(${1 - abs*0.24}) blur(${abs*0.6}px)`;
+    c.style.zIndex = 10 - abs;
+    c.style.pointerEvents = abs > 2 ? 'none' : 'auto';
+  });
+}
+function cfGo(i){ cfIdx = Math.max(0, Math.min(cfCards.length-1, i)); renderCF(); }
+document.getElementById('cfNext').addEventListener('click', ()=>cfGo(cfIdx+1===cfCards.length?0:cfIdx+1));
+document.getElementById('cfPrev').addEventListener('click', ()=>cfGo(cfIdx-1<0?cfCards.length-1:cfIdx-1));
+cfCards.forEach((c,i)=>c.addEventListener('click', ()=>cfGo(i)));
+let dragX = null;
+const cfEl = document.getElementById('coverflow');
+cfEl.addEventListener('pointerdown', e=>{ dragX = e.clientX });
+window.addEventListener('pointerup', e=>{
+  if(dragX===null) return;
+  const d = e.clientX - dragX;
+  if(d < -50) cfGo(cfIdx+1===cfCards.length?0:cfIdx+1);
+  else if(d > 50) cfGo(cfIdx-1<0?cfCards.length-1:cfIdx-1);
+  dragX = null;
+});
+renderCF();
+setInterval(()=>{ if(document.hidden) return; cfGo(cfIdx+1===cfCards.length?0:cfIdx+1) }, 5200);
+
+/* ---------- count-up ---------- */
+const nums = document.querySelectorAll('.stat-num');
+const numObs = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el = e.target, t = parseInt(el.dataset.target);
+    const sup = el.querySelector('sup') ? el.querySelector('sup').outerHTML : '';
+    let c = 0; const step = Math.max(1, Math.floor(t/48));
+    (function tick(){
+      c += step;
+      if(c >= t){ el.innerHTML = t + sup; }
+      else { el.innerHTML = c + sup; requestAnimationFrame(tick); }
+    })();
+    numObs.unobserve(el);
+  });
+},{threshold:0.5});
+nums.forEach(n=>numObs.observe(n));
+
+/* ---------- scroll reveal ---------- */
+const rvs = document.querySelectorAll('.rv');
+rvs.forEach((el,i)=>el.style.transitionDelay = (i%3)*0.1+'s');
+const rvObs = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); rvObs.unobserve(e.target); } });
+},{threshold:0.15});
+rvs.forEach(el=>rvObs.observe(el));
+</script>
+
+</body>
+</html>
